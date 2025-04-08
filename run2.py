@@ -24,7 +24,18 @@ def generar_factura():
     df["cant"] = df["cant"].astype(str) + " " + df["unidad"]
     df.drop("unidad", axis=1, inplace=True)
 
-    nit = int(path.split("_")[1])
+    try:
+        nit = int(path.split("_")[1])
+        address = df_clientes.query(f"NIT == {nit}")["DIRECCION"].iloc[0]
+        tel = df_clientes.query(f"NIT == {nit}")["TELEFONO"].iloc[0]
+    except:
+        nit = "Sin Información"
+        address = "Sin Información"
+        tel = "Sin Información"
+
+
+    
+
     uid = path.split("_")[0]
 
     def format_number(x):
@@ -85,7 +96,7 @@ def generar_factura():
 
     paragraph_des = table.cell(0,0).add_paragraph()
 
-    run = paragraph_des.add_run("Fecha: " + datetime.now().strftime("%d/%M/%Y"))
+    run = paragraph_des.add_run("Fecha: " + datetime.now().strftime("%d/%m/%Y"))
     run.font.size = Pt(10)
     run.font.name = "Cambria"
     run.add_break()
@@ -97,11 +108,11 @@ def generar_factura():
     run_2.font.name = "Cambria"
     run_2.add_break()
 
-    run_3 = paragraph_des.add_run(f"Dirección: {df_clientes.query(f"NIT == {nit}")["DIRECCION"].iloc[0]}")
+    run_3 = paragraph_des.add_run(f"Dirección: {address}")
     run_3.add_break()
-    run_3.add_text(F"NIT: {nit}")
+    run_3.add_text(f"NIT: {nit}")
     run_3.add_break()
-    run_3.add_text(f"Teléfono: {df_clientes.query(f"NIT == {nit}")["TELEFONO"].iloc[0]}")
+    run_3.add_text(f"Teléfono: {tel}")
     run_3.font.size = Pt(10)
     run_3.font.name = "Cambria"
 
